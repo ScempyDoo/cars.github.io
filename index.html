@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Автомобили | Минимализм</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1d1d1f;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .cars-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            font-size: 40px;
+            text-align: center;
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .section-title.animate {
+            animation: fadeInUp 1s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+        }
+
+        .car-card {
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #f5f5f7;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                        box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            height: 450px;
+        }
+
+        .car-card.animate {
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        .car-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .car-image-container {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .car-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .car-card:hover .car-image {
+            transform: scale(1.1);
+        }
+
+        .car-info {
+            padding: 20px;
+            position: relative;
+            height: 230px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .car-brand {
+            font-size: 14px;
+            color: #0066cc;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .car-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: transform 0.3s;
+        }
+
+        .car-card:hover .car-name {
+            transform: translateY(-2px);
+        }
+
+        .car-desc {
+            color: #6e6e73;
+            font-size: 14px;
+            margin-bottom: 10px;
+            flex-grow: 1;
+        }
+
+        .car-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 10px;
+        }
+
+        .specs {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            overflow-y: auto;
+            display: none;
+        }
+
+        .specs.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: slideInUp 0.3s ease forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #f5f5f7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            background-color: #e5e5e5;
+        }
+
+        .close-button:before, .close-button:after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 2px;
+            background-color: #1d1d1f;
+        }
+
+        .close-button:before {
+            transform: rotate(45deg);
+        }
+
+        .close-button:after {
+            transform: rotate(-45deg);
+        }
+
+        .specs-list {
+            list-style: none;
+            margin-top: 40px;
+        }
+
+        .specs-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f5f5f7;
+            font-size: 14px;
+        }
+
+        .specs-list li:last-child {
+            border-bottom: none;
+        }
+
+        .spec-name {
+            color: #6e6e73;
+        }
+
+        .spec-value {
+            font-weight: 600;
+        }
+
+        footer {
+            background-color: #1d1d1f;
+            color: #f5f5f7;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: #f5f5f7;
+            text-decoration: none;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #6e6e73;
+            transform: translateY(-2px);
+        }
+
+        .copyright {
+            color: #6e6e73;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .car-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @keyframes fadeOutDown {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .specs.closing {
+            animation: fadeOutDown 0.3s forwards;
+        }
+    </style>
+</head>
+<body>
+    <section id="models" class="cars-section">
+        <h2 class="section-title">НАШИ МОДЕЛИ</h2>
+        <div class="car-grid">
+            <div class="car-card">
+                <div class="car-image-container">
+                    <img src="https://avatars.mds.yandex.net/get-verba/787013/2a0000016381b0a2476158f14248412c4a05/cattouchret" alt="BMW i8" class="car-image">
+                </div>
+                <div class="car-info">
+                    <div class="car-brand">BMW</div>
+                    <h3 class="car-name">i8</h3>
+                    <p class="car-desc">Футуристический гибридный спорткар с инновационным дизайном и впечатляющими характеристиками.</p>
+                    <p class="car-price">Price: $148,500</p>
+                    <div class="specs">
+                        <div class="close-button"></div>
+                        <ul class="specs-list">
+                            <li>
+                                <span class="spec-name">Двигатель</span>
+                                <span class="spec-value">1.5 л + электродвигатель</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Мощность</span>
+                                <span class="spec-value">374 л.с.</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Разгон 0-100 км/ч</span>
+                                <span class="spec-value">4.4 сек</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Привод</span>
+                                <span class="spec-value">Полный</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Запас хода на электротяге</span>
+                                <span class="spec-value">55 км</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <div class="car-image-container">
+                    <img src="https://digitalassets.tesla.com/tesla-contents/image/upload/f_auto,q_auto/Model-S-Performance-Desktop.jpg" alt="Tesla Model S" class="car-image">
+                </div>
+                <div class="car-info">
+                    <div class="car-brand">Tesla</div>
+                    <h3 class="car-name">Model S Plaid</h3>
+                    <p class="car-desc">Электрический седан с непревзойденными характеристиками и революционными технологиями.</p>
+                    <p class="car-price">Price: $129,990</p>
+                    <div class="specs">
+                        <div class="close-button"></div>
+                        <ul class="specs-list">
+                            <li>
+                                <span class="spec-name">Тип двигателя</span>
+                                <span class="spec-value">Электрический</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Мощность</span>
+                                <span class="spec-value">1020 л.с.</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Разгон 0-100 км/ч</span>
+                                <span class="spec-value">2.1 сек</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Привод</span>
+                                <span class="spec-value">Полный</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Запас хода</span>
+                                <span class="spec-value">637 км</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <div class="car-image-container">
+                    <img src="https://images-porsche.imgix.net/-/media/B5EE8921E27E4796A4970472BD26D260_866EE785599E4ABA9790DDC53CB1AC42_TA24Q3EOX0002-taycan-turbo-s-driving?w=598&ar=3%3A4&q=85&auto=format" alt="Porsche Taycan" class="car-image">
+                </div>
+                <div class="car-info">
+                    <div class="car-brand">Porsche</div>
+                    <h3 class="car-name">Taycan Turbo S</h3>
+                    <p class="car-desc">Электрический спортивный автомобиль, сочетающий легендарную динамику Porsche с нулевыми выбросами.</p>
+                    <p class="car-price">Price: $185,000</p>
+                    <div class="specs">
+                        <div class="close-button"></div>
+                        <ul class="specs-list">
+                            <li>
+                                <span class="spec-name">Тип двигателя</span>
+                                <span class="spec-value">Электрический</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Мощность</span>
+                                <span class="spec-value">761 л.с.</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Разгон 0-100 км/ч</span>
+                                <span class="spec-value">2.8 сек</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Запас хода</span>
+                                <span class="spec-value">412 км</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Время зарядки</span>
+                                <span class="spec-value">22.5 мин (5-80%)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <div class="car-image-container">
+                    <img src="https://i.bstr.es/drivingeco/2019/11/audi-etron-gt-presentacion-oficial-5.jpg" alt="Audi e-tron GT" class="car-image">
+                </div>
+                <div class="car-info">
+                    <div class="car-brand">Audi</div>
+                    <h3 class="car-name">e-tron GT</h3>
+                    <p class="car-desc">Электрический гран-туризмо с выразительным дизайном и великолепной динамикой.</p>
+                    <p class="car-price">Price: $139,900</p>
+                    <div class="specs">
+                        <div class="close-button"></div>
+                        <ul class="specs-list">
+                            <li>
+                                <span class="spec-name">Тип двигателя</span>
+                                <span class="spec-value">Электрический</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Мощность</span>
+                                <span class="spec-value">646 л.с.</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Разгон 0-100 км/ч</span>
+                                <span class="spec-value">3.3 сек</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Привод</span>
+                                <span class="spec-value">Полный</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Запас хода</span>
+                                <span class="spec-value">488 км</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <div class="car-image-container">
+                    <img src="https://res.cloudinary.com/unix-center/image/upload/c_limit,dpr_3.0,f_auto,fl_progressive,g_center,h_580,q_75,w_906/o28udbvaff0u8xswtull.jpg" alt="Lamborghini Aventador" class="car-image">
+                </div>
+                <div class="car-info">
+                    <div class="car-brand">Lamborghini</div>
+                    <h3 class="car-name">Aventador SVJ</h3>
+                    <p class="car-desc">Суперкар с агрессивным дизайном и неукротимой мощью, воплощение итальянской страсти.</p>
+                    <p class="car-price">Price: $517,770</p>
+                    <div class="specs">
+                        <div class="close-button"></div>
+                        <ul class="specs-list">
+                            <li>
+                                <span class="spec-name">Двигатель</span>
+                                <span class="spec-value">6.5 л V12</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Мощность</span>
+                                <span class="spec-value">770 л.с.</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Разгон 0-100 км/ч</span>
+                                <span class="spec-value">2.8 сек</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Привод</span>
+                                <span class="spec-value">Полный</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Макс. скорость</span>
+                                <span class="spec-value">352 км/ч</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="car-card">
+                <div class="car-image-container">
+                    <img src="https://www.mercedes-benz.ca/content/dam/mb-nafta/ca/myco/my24/eqs-class/sedan/byo-options/MBCAN-2024-EQS-SEDAN-MP-026.jpg" alt="Mercedes-Benz EQS" class="car-image">
+                </div>
+                <div class="car-info">
+                    <div class="car-brand">Mercedes-Benz</div>
+                    <h3 class="car-name">EQS 580</h3>
+                    <p class="car-desc">Революционный электрический седан представительского класса с ультрасовременными технологиями.</p>
+                    <p class="car-price">Price: $125,950</p>
+                    <div class="specs">
+                        <div class="close-button"></div>
+                        <ul class="specs-list">
+                            <li>
+                                <span class="spec-name">Тип двигателя</span>
+                                <span class="spec-value">Электрический</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Мощность</span>
+                                <span class="spec-value">516 л.с.</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Разгон 0-100 км/ч</span>
+                                <span class="spec-value">4.3 сек</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Запас хода</span>
+                                <span class="spec-value">770 км</span>
+                            </li>
+                            <li>
+                                <span class="spec-name">Время зарядки</span>
+                                <span class="spec-value">31 мин (10-80%)</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <p>Откройте для себя будущее автомобильной индустрии прямо сейчас.</p>
+            <div class="footer-links">
+                <a href="#models">Модели</a>
+                <a href="#tech">Технологии</a>
+                <a href="#about">О нас</a>
+                <a href="#contact">Контакты</a>
+            </div>
+            <p class="copyright">© 2025 Автомобили. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        function checkScroll() {
+            const elements = document.querySelectorAll('.section-title, .car-card');
+            elements.forEach(element => {
+                const position = element.getBoundingClientRect();
+                if (position.top < window.innerHeight - 100) {
+                    element.classList.add('animate');
+                }
+            });
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        document.querySelectorAll('.car-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.close-button')) {
+                    e.stopPropagation();
+                    return;
+                }
+                const specs = this.querySelector('.specs');
+                if (specs.classList.contains('active')) {
+                    closeSpecss(specs);
+                } else {
+                    document.querySelectorAll('.specs.active').forEach(activeSpec => {
+                        if (activeSpec !== specs) {
+                            closeSpecss(activeSpec);
+                        }
+                    });
+                    specs.classList.add('active');
+                }
+            });
+        });
+
+        document.querySelectorAll('.close-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const specs = this.closest('.specs');
+                closeSpecss(specs);
+            });
+        });
+
+        function closeSpecss(specsElement) {
+            specsElement.classList.add('closing');
+            setTimeout(() => {
+                specsElement.classList.remove('active', 'closing');
+            }, 300);
+        }
+
+        window.addEventListener('load', checkScroll);
+        window.addEventListener('scroll', checkScroll);
+
+        document.querySelectorAll('.car-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.style.animation = `fadeInUp 0.8s forwards`;
+            }, 100 * index);
+        });
+    </script>
+</body>
+</html>
