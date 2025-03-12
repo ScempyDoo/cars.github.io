@@ -20,6 +20,15 @@
             overflow-x: hidden;
         }
 
+        a{
+            all: unset;
+            font-size: 14px;
+            color: #0066cc;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
         .cars-section {
             max-width: 1200px;
             margin: 0 auto;
@@ -649,6 +658,33 @@
                 }
             });
         }
+
+
+        window.addEventListener('DOMContentLoaded', function() {
+            const brandToModelUrl = {
+                'toyota': 'https://www.toyota.com',
+                'bmw': 'https://www.bmw.com',
+                'mercedes-benz': 'https://www.mercedes-benz.com',
+                // Добавьте больше брендов по необходимости
+            };
+
+            const brandElements = document.querySelectorAll('.car-brand');
+
+            brandElements.forEach(element => {
+                const brandName = element.textContent.trim().toLowerCase();
+                const url = brandToModelUrl[brandName];
+                if (url) {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.textContent = element.textContent;
+                    link.target = "_blank";
+                    link.rel = "noreferrer noopener";
+                    element.replaceWith(link);
+                } else {
+                    console.log(`No URL found for brand: ${brandName}`);
+                }
+            });
+        });
 
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
